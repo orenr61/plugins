@@ -15,9 +15,18 @@ module.exports = (Franz, options) => {
             return document.querySelector('.msgCount').innerHTML.replace(/[\(\) ]/gi,"");
         }) + tryGetCount(function() {
             // Get count for new Google Voice UI
-            return document.querySelector('div[aria-label="Unread count"]').innerHTML;
+            return document.querySelector('[view-type="/messages"] div[aria-label="Unread count"]').innerHTML;
         });
-    Franz.setBadge(count);
+
+    var missedCalls = tryGetCount(function() {
+        return document.querySelector('[view-type="/calls"] div[aria-label="Unread count"]').innerHTML;
+    });
+
+    var voicemails = tryGetCount(function() {
+        return document.querySelector('[view-type="/voicemail"] div[aria-label="Unread count"]').innerHTML;
+    });
+
+    Franz.setBadge(count, (missedCalls + voicemails));
   }
 
   Franz.loop(getMessages);
